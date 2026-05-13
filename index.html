@@ -1,0 +1,165 @@
+Enter<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>رسالة إلى سولي</title>
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #590d22;
+            --bg: #fff0f3;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: var(--bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            max-width: 90%;
+            width: 400px;
+            transition: all 0.5s ease;
+        }
+
+        h1 { color: var(--primary); font-size: 22px; margin-bottom: 30px; min-height: 60px; }
+        
+        .btn-group { display: flex; flex-direction: column; gap: 15px; }
+
+        button {
+            padding: 15px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.2s, background 0.3s;
+            font-weight: bold;
+        }
+
+        .opt-btn { background-color: var(--primary); color: white; }
+        .opt-btn:active { transform: scale(0.95); }
+
+        /* تنسيق المرحلة الأخيرة */
+        #noBtn { 
+            background-color: #ccc; 
+            color: #333; 
+            position: fixed; 
+            z-index: 99;
+            display: none; 
+        }
+
+        #finalMessage { 
+            display: none; 
+            color: var(--secondary);
+            line-height: 1.8;
+            font-size: 19px;
+            animation: fadeIn 1s;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div id="gameContainer" class="card">
+        <h1 id="questionText">سولي، تعرفين سبب تواجدج هنا؟</h1>
+        <div id="buttonsArea" class="btn-group">
+            <button class="opt-btn" onclick="nextStep(1)">اي اعرف</button>
+            <button class="opt-btn" onclick="nextStep(1)">لا ما عندي فكرة</button>
+        </div>
+
+        <div id="finalMessage">
+            <h2 style="color: var(--primary);">أدري بيج تسامحيني </h2>
+            <p>ما عندج خيار ثاني، أنتي باقية وياي بكل الأحوال.. <br>
+            صحيح نسيت ميلادج، بس هالشي ما يعني إن أني هاملج، <br>
+            أنتي أقرب إنسان إلي وأعز شخص أعرفه بحياتي وأكثر من أثق بي <br>
+            وهاي اخر مرة انسى تاريخ ميلادج، <br>
+            أحبج يبعد دنيتي كلها.</p>
+        </div>
+    </div>
+
+    <!-- زر "لا" المخفي الذي يظهر في المرحلة الثامنة فقط -->
+    <button id="noBtn" ontouchstart="moveButton(event)" onmouseover="moveButton(event)">لا بلة / دطير</button>
+
+    <script>
+        let currentStage = 0;
+
+        const content = [
+            { q: "سولي، اكو واحد نسى عيد ميلادج، تعرفيه لو لا؟", b1: "طبعا ماكو حيوان غيره", b2: "لا ماعرفه" },
+            { q: "هم ناوية تسامحينه؟", b1: "لا خل يولي", b2: "طبه مرض منو گاله ينسى" },
+            { q: "زين تدرين بي شكد يحبج لو لا؟", b1: "اي ادري", b2: "خل يولي" },
+            { q: "اكيد تدرين بي شكد يحبج، زين سامحيه هالمرة", b1: "مسامحته", b2: "لا تحاول" },
+            { q: "شني هية بكيفج مثلا، غصبا عليج تسامحين", b1: "لا بلة", b2: "دطير" }
+        ];
+
+        function nextStep(choice) {
+            if (currentStage < content.length) {
+                const stageData = content[currentStage];
+                document.getElementById('questionText').innerText = stageData.q;
+                
+                // تحديث نصوص الأزرار
+                const buttons = document.querySelectorAll('.opt-btn');
+                buttons[0].innerText = stageData.b1;
+                buttons[1].innerText = stageData.b2;
+                
+                currentStage++;
+            } else {
+                // الانتقال للمرحلة الثامنة (لعبة الزر المتحرك)
+                startFinalGame();
+            }
+        }
+
+        function startFinalGame() {
+            document.getElementById('questionText').innerText = "اكو حيوان نسة تاريخ ميلادج، يريدج تسامحيه،";
+            const buttonsArea = document.getElementById('buttonsArea');
+            
+            // تحويل الأزرار للنظام القديم
+            buttonsArea.innerHTML = `<button id="yesBtn" class="opt-btn" onclick="showLove()" style="width:100%">إي اسامحه واحبه</button>`;
+            
+            // إظهار زر "لا" اللعين
+            const noBtn = document.getElementById('noBtn');
+            noBtn.style.display = 'block';
+            noBtn.style.top = '65%';
+            noBtn.style.left = '50%';
+            noBtn.style.transform = 'translateX(-50%)';
+        }
+
+        function moveButton(e) {
+            if (e) e.preventDefault();
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+            
+            const padding = 50;
+            const x = Math.random() * (window.innerWidth - noBtn.clientWidth - padding * 2) + padding;
+            const y = Math.random() * (window.innerHeight - noBtn.clientHeight - padding * 2) + padding;
+            
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+            noBtn.style.transform = 'none';
+
+            // تكبير زر "إي"
+            let size = parseFloat(window.getComputedStyle(yesBtn).fontSize);
+            yesBtn.style.fontSize = (size + 5) + 'px';
+            yesBtn.style.padding = (size) + 'px';
+        }
+
+        function showLove() {
+            document.getElementById('questionText').style.display = 'none';
+            document.getElementById('buttonsArea').style.display = 'none';
+            document.getElementById('noBtn').style.display = 'none';
+            document.getElementById('finalMessage').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
